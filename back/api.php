@@ -84,20 +84,43 @@ if ($method === 'POST' && $route === 'login') {
 }
 
 //4. Endpoint POST /login
+function handleLogin() {
+    global $usuarios;
 
 //4.1. Lectura de Entrada:
 //Leer y decodificar el cuerpo de la petición (JSON) para obtener username y password.
+$json_data = file_get_contents('php://input');
+    $data = json_decode($json_data, true);
+
+    $username = $data['username'] ?? '';
+    $password = $data['password'] ?? '';
 
 //4.2. Validación de Credenciales:
 //Buscar las credenciales en el array $usuarios.
+$authenticatedUser = null;
+    foreach ($usuarios as $user) {
+        if ($user['username'] === $username && $user['password'] === $password) {
+            $authenticatedUser = $user;
+            break;
+        }
+    }
 
-//4.3 Respuesta exitosa (200 OK):
-//Si las credenciales son válidas, generar un "token JWT 
-//simulado" (usando base64_encode) y devolverlo en formato JSON.
-
-//4.4. Respuesta Fallida (401 Unauthorized):
-//Si las credenciales son incorrectas, responder con el código 
-//HTTP 401 y un mensaje de error JSON.
+    if ($authenticatedUser) {
+    //4.3 Respuesta exitosa (200 OK):
+    //Si las credenciales son válidas, generar un "token JWT 
+    //simulado" (usando base64_encode) y devolverlo en formato JSON.
+        $token = generateToken($username);
+        sendResponse(200, [
+            'message' => 'Autenticación exitosa',
+            'token' => $token,
+            'username' => $username
+        ]);
+    } else {
+    //4.4. Respuesta Fallida (401 Unauthorized):
+    //Si las credenciales son incorrectas, responder con el código 
+    //HTTP 401 y un mensaje de error JSON.
+        sendResponse(401, ['error' => 'Credenciales inválidas']);
+    }
 
 //5. Endpoint GET /welcome (Ruta Protegida)
 
