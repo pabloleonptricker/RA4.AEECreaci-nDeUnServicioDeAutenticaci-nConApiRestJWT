@@ -80,7 +80,7 @@ if ($method === 'POST' && $route === 'login') {
     handleWelcome();
 } else {
     // Ruta o método no soportado
-    sendResponse(404, ['error' => 'Ruta no encontrada o método no permitido.']);
+    enviarRespuesta(404, ['error' => 'Ruta no encontrada o método no permitido.']);
 }
 
 //4. Endpoint POST /login
@@ -109,8 +109,8 @@ $authenticatedUser = null;
     //4.3 Respuesta exitosa (200 OK):
     //Si las credenciales son válidas, generar un "token JWT 
     //simulado" (usando base64_encode) y devolverlo en formato JSON.
-        $token = generateToken($username);
-        sendResponse(200, [
+        $token = obtenerTokenDeEncabezado($username);
+        enviarRespuesta(200, [
             'message' => 'Autenticación exitosa',
             'token' => $token,
             'username' => $username
@@ -119,26 +119,82 @@ $authenticatedUser = null;
     //4.4. Respuesta Fallida (401 Unauthorized):
     //Si las credenciales son incorrectas, responder con el código 
     //HTTP 401 y un mensaje de error JSON.
-        sendResponse(401, ['error' => 'Credenciales inválidas']);
+        enviarRespuesta(401, ['error' => 'Credenciales inválidas']);
+    }
+}
+
+//Funciones del Token:
+//Función interna para obtener el token del encabezado Authorization
+function obtenerTokenDeEncabezado() {
+    $headers = getallheaders();
+    if (isset($headers['Authorization']) || isset($headers['authorization'])) {
+        // Normaliza la cabecera, ya que PHP puede cambiar el case
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'];
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            return $matches[1];
+        }
+    }
+    return null;
+}
+
+// Función interna para validar y decodificar el token
+function validateToken($token) {
+    // Decodificar el token (base64)
+    $payload_json = base64_decode($token, true);
+    if ($payload_json === false) {
+        return false; // Error de formato base64
     }
 
+    $payload = json_decode($payload_json, true);
+    if ($payload === null) {
+        return false; // Error de formato JSON
+    }
+    //5.2. Validación del Token:
+    //Validar que el token exista y sea un token válido y no 
+    //expirado (simularemos que cualquier token devuelto en el 
+    //login es válido por ahora).
+    if (isset($payload['exp']) && $payload['exp'] < time()) {
+        return false; // Token expirado
+    }
+
+    // Si llega aquí, el token es estructuralmente válido y no ha expirado
+    return $payload;
+}
+
 //5. Endpoint GET /welcome (Ruta Protegida)
+function handleWelcome() {
+    // 5.1. Extracción del Token
+    //Intentar obtener el token del encabezado Authorization 
+    //(Bearer <token>).
+    $token = obtenerTokenDeEncabezado();
 
-//5.1. Extracción del Token:
-//Intentar obtener el token del encabezado Authorization 
-//(Bearer <token>).
+    if (!$token) {
+        // 5.4. Respuesta Fallida (403 Forbidden): Token ausente
+        enviarRespuesta(403, ['error' => 'Token de autenticación requerido.']);
+    }
 
-//5.2. Validación del Token:
-//Validar que el token exista y sea un token válido y no 
-//expirado (simularemos que cualquier token devuelto en el 
-//login es válido por ahora).
+    $payload = validateToken($token);
 
-//5.3. Respuesta Exitosa (200 OK):
-//Si el token es válido, devolver los datos del usuario 
-//(ej. nombre) y la hora actual en JSON.
+    if (!$payload) {
+        // 5.4. Respuesta Fallida (403 Forbidden): Token inválido o expirado
+        //Si el token está ausente o es inválido, responder con el 
+        //código HTTP 403 y un mensaje de error JSON.
+        enviarRespuesta(403, ['error' => 'Token inválido o expirado.']);
+    }
+    //El tokken es válido, obtenemos el nombre de usuario.
+    $username = $payload['user'];
 
-//5.4. Respuesta Fallida (403 Forbidden):
-//Si el token está ausente o es inválido, responder con el 
-//código HTTP 403 y un mensaje de error JSON.
+    //5.3. Respuesta Exitosa (200 OK):
+    //Si el token es válido, devolver los datos del usuario 
+    //(ej. nombre) y la hora actual en JSON.
+    enviarRespuesta(200, [
+        'message' => 'Acceso autorizado',
+        'username' => $username,
+        'time' => date('H:i:s'), // Hora actual para el frontend
+        'date' => date('d/m/Y'), // Fecha actual
+        'welcome_message' => '¡Has accedido al panel de control seguro!'
+    ]);
+}
+
 
 ?>
