@@ -1,0 +1,68 @@
+<?php
+
+//1. Configuración inicial y CORS
+
+//1.1. Cabeceras JSON:
+//Configurar las cabeceras HTTP para indicar que la respuesta 
+//será en formato JSON y permitir solicitudes desde cualquier origen.
+
+//1.2. CORS (Cross-Origin Resource Sharing):
+//Permitir peticiones desde cualquier origen (necesario cuando 
+//el frontend y el backend están en diferentes puertos o 
+//dominios, o simplemente para simplificar la prueba).
+
+//1.3. Manejo de opciones:
+//Responder a las solicitudes OPTIONS (preflight requests)
+
+//2. Simulación de la base de datos y credenciales
+
+//2.1. Lista de usuarios:
+//Definir el array $usuarios con las creedenciales predefinidas.
+//("admin" / "password123", "user" / "userpass") Por ejemplo.
+
+//3. Enrutamiento de la API (Routing)
+
+//3.1. Detección de Ruta:
+//Analizar la URL o el parámetro de la petición para determinar
+//si la ruta es /login o /welcome.
+
+//3.2. Detección de Método:
+//Identificar si el método es POST (para login) o GET (para 
+//welcome).
+
+//4. Endpoint POST /login
+
+//4.1. Lectura de Entrada:
+//Leer y decodificar el cuerpo de la petición (JSON) para obtener username y password.
+
+//4.2. Validación de Credenciales:
+//Buscar las credenciales en el array $usuarios.
+
+//4.3 Respuesta exitosa (200 OK):
+//Si las credenciales son válidas, generar un "token JWT 
+//simulado" (usando base64_encode) y devolverlo en formato JSON.
+
+//4.4. Respuesta Fallida (401 Unauthorized):
+//Si las credenciales son incorrectas, responder con el código 
+//HTTP 401 y un mensaje de error JSON.
+
+//5. Endpoint GET /welcome (Ruta Protegida)
+
+//5.1. Extracción del Token:
+//Intentar obtener el token del encabezado Authorization 
+//(Bearer <token>).
+
+//5.2. Validación del Token:
+//Validar que el token exista y sea un token válido y no 
+//expirado (simularemos que cualquier token devuelto en el 
+//login es válido por ahora).
+
+//5.3. Respuesta Exitosa (200 OK):
+//Si el token es válido, devolver los datos del usuario 
+//(ej. nombre) y la hora actual en JSON.
+
+//5.4. Respuesta Fallida (403 Forbidden):
+//Si el token está ausente o es inválido, responder con el 
+//código HTTP 403 y un mensaje de error JSON.
+
+?>

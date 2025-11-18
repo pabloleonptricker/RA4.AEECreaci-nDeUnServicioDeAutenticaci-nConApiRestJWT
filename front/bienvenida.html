@@ -1,0 +1,49 @@
+<!--1. Estructura y Estilos-->
+
+<!--1.1. Diseño Base (HTML/CSS): Crear una estructura básica 
+HTML con un diseño limpio y moderno (usando Tailwind) para 
+mostrar los datos de bienvenida, en estilo de negro mate y 
+mostaza.-->
+
+<!--1.2. Elementos Dinámicos: Incluir placeholders (elementos 
+vacíos) en el HTML donde se inyectarán los datos obtenidos de 
+la API (Nombre de Usuario, Hora Actual, Mensaje).-->
+
+<!--1.3. Botón de Cerrar Sesión: Crear un botón o enlace con un 
+id claro para la funcionalidad de logout.-->
+
+<!--2. Lógica de Autenticación (JavaScript)-->
+<!--2.1. Carga Inicial: Al cargar la página, ejecutar una 
+función principal para verificar el estado de la autenticación.-->
+
+<!--2.2. Verificación del Token: Comprobar si existe un token 
+almacenado en localStorage.-->
+<!--Si NO hay token: Redirigir inmediatamente a login.html.-->
+
+<!--2.3. Petición Protegida a la API (fetch):-->
+<!--Método: Realizar una petición GET al endpoint de la API 
+protegida: api.php/welcome.-->
+<!--Cabecera Authorization: Incluir el token de localStorage en
+la cabecera HTTP: Authorization: Bearer <token>.-->
+
+<!--3. Manejo de Respuestas de la API-->
+
+<!--3.1. Respuesta Exitosa (200 OK):-->
+<!--Parsear la respuesta JSON de la API.-->
+<!--Inyectar los datos del usuario (nombre, hora) en los 
+placeholders del HTML.-->
+<!--Mostrar el mensaje de bienvenida.-->
+
+<!--3.2. Respuesta Fallida (403 Forbidden):-->
+<!--Detectar el código de estado 403.-->
+<!--Eliminar el token de localStorage (como medida de seguridad).-->
+<!--Redirigir automáticamente a la página de error: sin_permisos.html.-->
+
+<!--4. Funcionalidad de Cerrar Sesión-->
+
+<!--4.1. Event Listener: Asignar un event listener al botón de 
+cerrar sesión.-->
+
+<!--4.2. Función logout: Al hacer clic:-->
+<!--Eliminar el token de localStorage.-->
+<!--Redirigir al usuario a la página de acceso: login.html.-->

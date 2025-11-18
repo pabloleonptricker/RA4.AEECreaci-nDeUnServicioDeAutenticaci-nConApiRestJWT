@@ -1,0 +1,54 @@
+<!--1. Estructura y Estilos-->
+
+<!--1.1. Diseño Base (HTML/CSS):-->
+<!--Crear una estructura HTML básica que albergue el formulario
+de acceso, utilizando el estilo de negro mate y mostaza 
+(a través de Tailwind CSS) para una apariencia elegante y 
+moderna.-->
+
+<!--1.2. Formulario:--> 
+<!--Debe contener campos de entrada para el Nombre de usuario 
+('username') y la Contraseña ('password'), además de un botón 
+de envío.-->
+
+<!--2. Lógica de Pre-verificación (JavaScript)-->
+
+<!--2.1. Comprobación de Token:-->
+<!--Al cargar la página, ejecutar un chequeo inicial en 
+localStorage para buscar el token de autenticación.-->
+
+<!--2.2. Redirección Automática:-->
+<!--Si YA existe un token almacenado, redirigir inmediatamente 
+al usuario a la página segura: bienvenida.html.-->
+
+<!--3. Lógica de Envío de Credenciales (JavaScript)-->
+
+<!--3.1. Captura de Evento:-->
+<!--Asignar un event listener al formulario para prevenir el 
+envío tradicional (submit) y manejar el proceso con fetch.-->
+
+<!--3.2. Recolección de Datos:-->
+<!--Obtener los valores de los campos 'username' y 'password'.-->
+
+<!--3.3. Petición a la API (fetch):-->
+<!--Enviar una petición POST al endpoint de autenticación: 
+api.php/login. El cuerpo de la petición debe ser un objeto JSON 
+con las credenciales.-->
+
+<!--4. Manejo de Respuestas de la API-->
+
+<!--4.1. Respuesta Exitosa (200 OK):-->
+<!--Extraer el 'token' de la respuesta JSON.-->
+<!--Almacenar el token en localStorage con una clave específica
+(ej. 'authToken').-->
+<!--Redirigir al usuario a la página segura: bienvenida.html.-->
+
+<!--4.2. Respuesta Fallida (401 Unauthorized):-->
+<!--Detectar el código de estado 401.-->
+<!--Mostrar un mensaje de error claro y visible en la interfaz 
+(ej. "Credenciales incorrectas").-->
+
+<!--4.3. Indicador de Carga:-->
+<!--(Opcional) Implementar un mecanismo para deshabilitar el 
+botón de envío y/o mostrar un spinner mientras se espera la 
+respuesta de la API.-->
