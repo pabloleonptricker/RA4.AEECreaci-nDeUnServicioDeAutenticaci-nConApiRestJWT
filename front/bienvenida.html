@@ -1,49 +1,199 @@
-<!--1. Estructura y Estilos-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenida - Panel Seguro</title>
+    <!-- Carga de Tailwind CSS para estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Definición de la paleta de colores para Tailwind */
+        :root {
+            --color-mate-negro: #1a1a1a;
+            --color-mostaza: #ffc107;
+            --color-texto-claro: #f5f5f5;
+            --color-input-bg: #333333;
+        }
 
-<!--1.1. Diseño Base (HTML/CSS): Crear una estructura básica 
-HTML con un diseño limpio y moderno (usando Tailwind) para 
-mostrar los datos de bienvenida, en estilo de negro mate y 
-mostaza.-->
+        /* Configuración de estilos en Tailwind para usar las variables CSS */
+        .bg-mate-negro { background-color: var(--color-mate-negro); }
+        .text-mostaza { color: var(--color-mostaza); }
+        .border-mostaza { border-color: var(--color-mostaza); }
+        .bg-mostaza { background-color: var(--color-mostaza); }
+        .bg-input { background-color: var(--color-input-bg); }
 
-<!--1.2. Elementos Dinámicos: Incluir placeholders (elementos 
-vacíos) en el HTML donde se inyectarán los datos obtenidos de 
-la API (Nombre de Usuario, Hora Actual, Mensaje).-->
+        /* Aplicar la fuente Inter, globalmente */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
 
-<!--1.3. Botón de Cerrar Sesión: Crear un botón o enlace con un 
-id claro para la funcionalidad de logout.-->
+        /* Estilo para el icono de carga */
+        .spinner {
+            border-top-color: var(--color-mostaza);
+            -webkit-animation: spin 1s ease-in-out infinite;
+            animation: spin 1s ease-in-out infinite;
+        }
 
-<!--2. Lógica de Autenticación (JavaScript)-->
-<!--2.1. Carga Inicial: Al cargar la página, ejecutar una 
-función principal para verificar el estado de la autenticación.-->
+        @keyframes spin {
+            to { -webkit-transform: rotate(360deg); }
+        }
+        @-webkit-keyframes spin {
+            to { -webkit-transform: rotate(360deg); }
+        }
+    </style>
+</head>
 
-<!--2.2. Verificación del Token: Comprobar si existe un token 
-almacenado en localStorage.-->
-<!--Si NO hay token: Redirigir inmediatamente a login.html.-->
+<body class="bg-mate-negro min-h-screen flex items-center justify-center p-4">
 
-<!--2.3. Petición Protegida a la API (fetch):-->
-<!--Método: Realizar una petición GET al endpoint de la API 
-protegida: api.php/welcome.-->
-<!--Cabecera Authorization: Incluir el token de localStorage en
-la cabecera HTTP: Authorization: Bearer <token>.-->
+    <!-- 1. Estructura y Estilos -->
+    <div class="w-full max-w-lg bg-[#242424] p-8 rounded-xl shadow-2xl border border-[#333333]">
+        <h1 class="text-3xl font-extrabold text-center text-mostaza mb-2" id="welcome-title">
+            Panel de Control
+        </h1>
+        <p class="text-center text-gray-400 mb-8">
+            Información solo para usuarios autenticados
+        </p>
 
-<!--3. Manejo de Respuestas de la API-->
+        <!-- Contenedor para la información de bienvenida (Inicialmente oculto) -->
+        <div id="content-display" class="hidden">
+            <!-- Mensaje de Bienvenida Principal -->
+            <div class="bg-input p-4 rounded-lg mb-6 border-l-4 border-mostaza">
+                <p class="text-xl font-semibold text-gray-200" id="welcome-message">
+                    <!-- Mensaje de bienvenida del API se inyectará aquí -->
+                </p>
+            </div>
 
-<!--3.1. Respuesta Exitosa (200 OK):-->
-<!--Parsear la respuesta JSON de la API.-->
-<!--Inyectar los datos del usuario (nombre, hora) en los 
-placeholders del HTML.-->
-<!--Mostrar el mensaje de bienvenida.-->
+            <!-- Datos específicos del usuario / API -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 rounded-lg bg-[#2a2a2a]">
+                    <span class="text-sm font-medium text-gray-400">Usuario autenticado:</span>
+                    <span class="font-bold text-gray-200" id="username-display">Cargando...</span>
+                </div>
+                <div class="flex justify-between items-center p-3 rounded-lg bg-[#2a2a2a]">
+                    <span class="text-sm font-medium text-gray-400">Hora de acceso (API):</span>
+                    <span class="font-bold text-gray-200" id="time-display">Cargando...</span>
+                </div>
+                <div class="flex justify-between items-center p-3 rounded-lg bg-[#2a2a2a]">
+                    <span class="text-sm font-medium text-gray-400">Fecha de acceso (API):</span>
+                    <span class="font-bold text-gray-200" id="date-display">Cargando...</span>
+                </div>
+            </div>
 
-<!--3.2. Respuesta Fallida (403 Forbidden):-->
-<!--Detectar el código de estado 403.-->
-<!--Eliminar el token de localStorage (como medida de seguridad).-->
-<!--Redirigir automáticamente a la página de error: sin_permisos.html.-->
+            <!-- 4. Botón de Logout -->
+            <button id="logoutButton"
+                    class="w-full mt-8 text-black bg-mostaza hover:bg-yellow-400 focus:ring-4 focus:outline-none focus:ring-yellow-800 font-bold rounded-lg text-lg px-5 py-3 text-center transition duration-200 shadow-md">
+                Cerrar Sesión
+            </button>
+        </div>
 
-<!--4. Funcionalidad de Cerrar Sesión-->
+        <!-- 2. Indicador de Carga y Mensajes -->
+        <div id="loading-container" class="text-center py-10">
+            <div class="spinner border-4 border-solid border-gray-600 rounded-full h-12 w-12 mx-auto mb-3"></div>
+            <p class="text-gray-400">Verificando autenticación...</p>
+        </div>
 
-<!--4.1. Event Listener: Asignar un event listener al botón de 
-cerrar sesión.-->
+        <!-- Contenedor para mensajes de error (Inicialmente oculto) -->
+        <div id="error-container" class="hidden mt-6 bg-red-900/30 border border-red-800 p-4 rounded-lg">
+            <p class="text-red-400 font-semibold" id="error-message">
+                <!-- Mensaje de error (e.g., Token Inválido/Expirado) -->
+            </p>
+            <p class="text-sm text-red-300 mt-2">Serás redirigido al login en <span id="countdown">5</span> segundos.</p>
+        </div>
+    </div>
 
-<!--4.2. Función logout: Al hacer clic:-->
-<!--Eliminar el token de localStorage.-->
-<!--Redirigir al usuario a la página de acceso: login.html.-->
+    <script>
+        // Definición de constantes
+        // ASUMIMOS que api.php está en el mismo nivel de carpeta.
+        const API_URL = 'api.php/welcome';
+        const TOKEN_KEY = 'authToken';
+
+        // Elementos DOM para interactuar
+        const contentDisplay = document.getElementById('content-display');
+        const loadingContainer = document.getElementById('loading-container');
+        const errorContainer = document.getElementById('error-container');
+        const errorMessageDisplay = document.getElementById('error-message');
+        const usernameDisplay = document.getElementById('username-display');
+        const timeDisplay = document.getElementById('time-display');
+        const dateDisplay = document.getElementById('date-display');
+        const welcomeMessageDisplay = document.getElementById('welcome-message');
+        const logoutButton = document.getElementById('logoutButton');
+
+        // Función para mostrar el error y redirigir
+        function handleAuthError(message) {
+            errorMessageDisplay.textContent = message;
+            loadingContainer.classList.add('hidden');
+            contentDisplay.classList.add('hidden');
+            errorContainer.classList.remove('hidden');
+            
+            let count = 5;
+            document.getElementById('countdown').textContent = count;
+            const interval = setInterval(() => {
+                count--;
+                document.getElementById('countdown').textContent = count;
+                if (count <= 0) {
+                    clearInterval(interval);
+                    localStorage.removeItem(TOKEN_KEY); 
+                    window.location.href = 'login.html';
+                }
+            }, 1000);
+        }
+
+        // Lógica de Petición Protegida
+        async function fetchWelcomeData() {
+            loadingContainer.classList.remove('hidden');
+
+            const token = localStorage.getItem(TOKEN_KEY);
+
+            if (!token) {
+                console.warn('No se encontró el token. Redirigiendo.');
+                handleAuthError('No tienes permiso para acceder. Necesitas iniciar sesión.');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log("Datos de bienvenida recibidos:", data);
+                    
+                    usernameDisplay.textContent = data.username;
+                    timeDisplay.textContent = data.time;
+                    dateDisplay.textContent = data.date;
+                    welcomeMessageDisplay.textContent = data.welcome_message;
+
+                    loadingContainer.classList.add('hidden');
+                    contentDisplay.classList.remove('hidden');
+
+                } else if (response.status === 403 || response.status === 401) {
+                    console.error('Error de autenticación/autorización:', data.error);
+                    handleAuthError(data.error || 'Sesión expirada o token inválido.');
+
+                } else {
+                    throw new Error(data.error || `Error desconocido: ${response.status}`);
+                }
+
+            } catch (error) {
+                console.error('Error de conexión o servidor:', error);
+                handleAuthError('Error al conectar con el servidor. Por favor, inténtalo más tarde.');
+            }
+        }
+
+        window.onload = fetchWelcomeData;
+
+
+        // Lógica de Cierre de Sesión
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem(TOKEN_KEY);
+            console.log('Sesión cerrada. Token eliminado.');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

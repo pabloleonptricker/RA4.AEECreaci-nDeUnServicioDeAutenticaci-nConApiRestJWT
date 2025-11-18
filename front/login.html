@@ -1,54 +1,170 @@
-<!--1. Estructura y Estilos-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso al Sistema - RA4 Autenticación JWT</title>
+    <!-- Carga de Tailwind CSS para estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Definición de la paleta de colores para Tailwind */
+        :root {
+            --color-mate-negro: #1a1a1a;
+            --color-mostaza: #ffc107;
+            --color-texto-claro: #f5f5f5;
+            --color-input-bg: #333333;
+        }
 
-<!--1.1. Diseño Base (HTML/CSS):-->
-<!--Crear una estructura HTML básica que albergue el formulario
-de acceso, utilizando el estilo de negro mate y mostaza 
-(a través de Tailwind CSS) para una apariencia elegante y 
-moderna.-->
+        /* Configuración de estilos en Tailwind para usar las variables CSS */
+        .bg-mate-negro { background-color: var(--color-mate-negro); }
+        .text-mostaza { color: var(--color-mostaza); }
+        .border-mostaza { border-color: var(--color-mostaza); }
+        .bg-mostaza { background-color: var(--color-mostaza); }
+        .bg-input { background-color: var(--color-input-bg); }
 
-<!--1.2. Formulario:--> 
-<!--Debe contener campos de entrada para el Nombre de usuario 
-('username') y la Contraseña ('password'), además de un botón 
-de envío.-->
+        /* Aplicar la fuente Inter, globalmente */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
 
-<!--2. Lógica de Pre-verificación (JavaScript)-->
+<body class="bg-mate-negro min-h-screen flex items-center justify-center p-4">
 
-<!--2.1. Comprobación de Token:-->
-<!--Al cargar la página, ejecutar un chequeo inicial en 
-localStorage para buscar el token de autenticación.-->
+    <!-- 1. Estructura y Estilos -->
+    <div class="w-full max-w-md bg-[#242424] p-8 rounded-xl shadow-2xl border border-[#333333] transform transition duration-500 hover:scale-[1.02]">
+        <!-- TÍTULO SOLICITADO -->
+        <h1 class="text-3xl font-extrabold text-center text-mostaza mb-2">
+            Bienvenido al Inicio de Sesión de Pablo León
+        </h1>
+        <p class="text-center text-gray-400 mb-8">
+            Inicia sesión para acceder al panel seguro
+        </p>
 
-<!--2.2. Redirección Automática:-->
-<!--Si YA existe un token almacenado, redirigir inmediatamente 
-al usuario a la página segura: bienvenida.html.-->
+        <!-- Formulario de Acceso -->
+        <form id="loginForm">
+            
+            <!-- Campo de Nombre de usuario -->
+            <div class="mb-5">
+                <label for="username" class="block mb-2 text-sm font-medium text-gray-300">
+                    Nombre de usuario
+                </label>
+                <input type="text" id="username" name="username" required
+                       class="bg-input text-gray-200 text-sm rounded-lg focus:ring-mostaza focus:border-mostaza block w-full p-3 border border-[#444444]"
+                       placeholder="admin o user">
+            </div>
 
-<!--3. Lógica de Envío de Credenciales (JavaScript)-->
+            <!-- Campo de Contraseña -->
+            <div class="mb-8">
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-300">
+                    Contraseña
+                </label>
+                <input type="password" id="password" name="password" required
+                       class="bg-input text-gray-200 text-sm rounded-lg focus:ring-mostaza focus:border-mostaza block w-full p-3 border border-[#444444]"
+                       placeholder="1234 o abcd">
+            </div>
 
-<!--3.1. Captura de Evento:-->
-<!--Asignar un event listener al formulario para prevenir el 
-envío tradicional (submit) y manejar el proceso con fetch.-->
+            <!-- Contenedor para mensajes de error -->
+            <div id="error-message" class="text-red-400 text-sm mb-4 hidden">
+                <!-- El mensaje de error se inyectará aquí -->
+            </div>
 
-<!--3.2. Recolección de Datos:-->
-<!--Obtener los valores de los campos 'username' y 'password'.-->
+            <!-- Botón de Envío -->
+            <button type="submit" id="loginButton"
+                    class="w-full text-black bg-mostaza hover:bg-yellow-400 focus:ring-4 focus:outline-none focus:ring-yellow-800 font-bold rounded-lg text-lg px-5 py-3 text-center transition duration-200 shadow-md">
+                Iniciar Sesión
+            </button>
+            
+            <!-- Indicador de Carga (Spinner) -->
+            <div id="loadingIndicator" class="mt-4 text-center hidden">
+                <svg class="animate-spin h-5 w-5 text-mostaza mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-gray-400 text-sm mt-1 block">Validando credenciales...</span>
+            </div>
 
-<!--3.3. Petición a la API (fetch):-->
-<!--Enviar una petición POST al endpoint de autenticación: 
-api.php/login. El cuerpo de la petición debe ser un objeto JSON 
-con las credenciales.-->
+        </form>
+    </div>
 
-<!--4. Manejo de Respuestas de la API-->
+    <script>
+        // Definición de constantes
+        // ASUMIMOS que api.php está en el mismo nivel de carpeta.
+        const API_URL = 'api.php/login';
+        const TOKEN_KEY = 'authToken';
 
-<!--4.1. Respuesta Exitosa (200 OK):-->
-<!--Extraer el 'token' de la respuesta JSON.-->
-<!--Almacenar el token en localStorage con una clave específica
-(ej. 'authToken').-->
-<!--Redirigir al usuario a la página segura: bienvenida.html.-->
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessageDiv = document.getElementById('error-message');
+        const loginButton = document.getElementById('loginButton');
+        const loadingIndicator = document.getElementById('loadingIndicator');
 
-<!--4.2. Respuesta Fallida (401 Unauthorized):-->
-<!--Detectar el código de estado 401.-->
-<!--Mostrar un mensaje de error claro y visible en la interfaz 
-(ej. "Credenciales incorrectas").-->
+        // Función para mostrar/ocultar el estado de carga
+        function setLoading(isLoading) {
+            loginButton.disabled = isLoading;
+            loginButton.classList.toggle('opacity-50', isLoading);
+            loadingIndicator.classList.toggle('hidden', !isLoading);
+            errorMessageDiv.classList.add('hidden'); // Ocultar errores al intentar de nuevo
+        }
 
-<!--4.3. Indicador de Carga:-->
-<!--(Opcional) Implementar un mecanismo para deshabilitar el 
-botón de envío y/o mostrar un spinner mientras se espera la 
-respuesta de la API.-->
+        // ----------------------------------------------------------------------------------
+        // 2. Lógica de Pre-verificación (JavaScript)
+        // ----------------------------------------------------------------------------------
+        window.onload = function() {
+            if (localStorage.getItem(TOKEN_KEY)) {
+                console.log("Token encontrado. Redirigiendo a bienvenida.");
+                window.location.href = 'bienvenida.html';
+            }
+        };
+
+        // ----------------------------------------------------------------------------------
+        // 3. Lógica de Envío de Credenciales (JavaScript)
+        // ----------------------------------------------------------------------------------
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            setLoading(true);
+
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log("Login exitoso:", data);
+                    
+                    const token = data.token;
+                    localStorage.setItem(TOKEN_KEY, token);
+                    
+                    window.location.href = 'bienvenida.html';
+
+                } else if (response.status === 401) {
+                    console.error("Error 401:", data.error);
+                    errorMessageDiv.textContent = data.error || 'Credenciales incorrectas. Inténtalo de nuevo.';
+                    errorMessageDiv.classList.remove('hidden');
+
+                } else {
+                    throw new Error(data.error || `Error desconocido: ${response.status}`);
+                }
+
+            } catch (error) {
+                console.error('Error de conexión o servidor:', error);
+                errorMessageDiv.textContent = 'Error al conectar con el servidor. Asegúrate de que api.php esté funcionando.';
+                errorMessageDiv.classList.remove('hidden');
+            } finally {
+                setLoading(false);
+            }
+        });
+    </script>
+
+</body>
+</html>
