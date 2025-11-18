@@ -54,6 +54,17 @@ function generarToken($username){
 
 //3. Enrutamiento de la API (Routing)
 
+// Obtener la ruta solicitada (ej. /api.php/login o /api.php/welcome)
+$request_uri = $_SERVER['REQUEST_URI'];
+$script_name = $_SERVER['SCRIPT_NAME'];
+
+// Eliminar el nombre del script de la URI y limpiar barras para obtener la ruta lógica
+$route = str_replace($script_name, '', $request_uri);
+$route = trim($route, '/');
+
+// El método HTTP de la petición
+$method = $_SERVER['REQUEST_METHOD'];
+
 //3.1. Detección de Ruta:
 //Analizar la URL o el parámetro de la petición para determinar
 //si la ruta es /login o /welcome.
@@ -61,6 +72,16 @@ function generarToken($username){
 //3.2. Detección de Método:
 //Identificar si el método es POST (para login) o GET (para 
 //welcome).
+
+//Logica de enrutamiento:
+if ($method === 'POST' && $route === 'login') {
+    handleLogin();
+} elseif ($method === 'GET' && $route === 'welcome') {
+    handleWelcome();
+} else {
+    // Ruta o método no soportado
+    sendResponse(404, ['error' => 'Ruta no encontrada o método no permitido.']);
+}
 
 //4. Endpoint POST /login
 
