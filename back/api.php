@@ -27,6 +27,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 //2.1. Lista de usuarios:
 //Definir el array $usuarios con las creedenciales predefinidas.
 //("admin" / "password123", "user" / "userpass") Por ejemplo.
+$usuarios = [
+    ["username" => "admin", "password" => "1234"],
+    ["username" => "user", "password" => "abcd"],
+    ["username" => "caros", "password" => "diezparapablo"]
+];
+
+//Función para enviar respuestas JSON
+function enviarRespuesta($status, $data = null){
+    http_response_code($status);
+    echo json_encode($data);
+    exit();
+}
+
+//Función para generar un token simulado
+function generarToken($username){
+    // Crear un payload simple con el nombre de usuario
+    $payload = [
+        'user' => $username,
+        'iat' => time(),
+        'exp' => time() + (60 * 60) // Expira en 1 hora
+    ];
+    // Codificamos el payload.
+    return base64_encode(json_encode($payload));
+}
 
 //3. Enrutamiento de la API (Routing)
 
