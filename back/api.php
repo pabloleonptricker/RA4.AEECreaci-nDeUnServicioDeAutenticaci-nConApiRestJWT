@@ -5,14 +5,22 @@
 //1.1. Cabeceras JSON:
 //Configurar las cabeceras HTTP para indicar que la respuesta 
 //será en formato JSON y permitir solicitudes desde cualquier origen.
+header("Content-Type: application/json; charset=UTF-8");
 
 //1.2. CORS (Cross-Origin Resource Sharing):
 //Permitir peticiones desde cualquier origen (necesario cuando 
 //el frontend y el backend están en diferentes puertos o 
 //dominios, o simplemente para simplificar la prueba).
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 
 //1.3. Manejo de opciones:
 //Responder a las solicitudes OPTIONS (preflight requests)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 //2. Simulación de la base de datos y credenciales
 
