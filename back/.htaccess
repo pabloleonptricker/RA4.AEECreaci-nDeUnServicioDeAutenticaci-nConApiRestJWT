@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    # ... (Reglas anteriores de RewriteRule)
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ api.php/$1 [QSA,L]
+
+    # ESTA LÍNEA ES CRÍTICA: Fuerza a pasar la cabecera Authorization a PHP
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>

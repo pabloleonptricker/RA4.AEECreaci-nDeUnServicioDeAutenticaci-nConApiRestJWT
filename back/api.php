@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 $usuarios = [
     ["username" => "admin", "password" => "1234"],
     ["username" => "user", "password" => "abcd"],
-    ["username" => "caros", "password" => "diezparapablo"]
+    ["username" => "carlos", "password" => "diezparapablo"]
 ];
 
 //Función para enviar respuestas JSON
@@ -109,7 +109,7 @@ $authenticatedUser = null;
     //4.3 Respuesta exitosa (200 OK):
     //Si las credenciales son válidas, generar un "token JWT 
     //simulado" (usando base64_encode) y devolverlo en formato JSON.
-        $token = obtenerTokenDeEncabezado($username);
+        $token = generarToken($username);
         enviarRespuesta(200, [
             'message' => 'Autenticación exitosa',
             'token' => $token,
@@ -126,15 +126,30 @@ $authenticatedUser = null;
 //Funciones del Token:
 //Función interna para obtener el token del encabezado Authorization
 function obtenerTokenDeEncabezado() {
-    $headers = getallheaders();
-    if (isset($headers['Authorization']) || isset($headers['authorization'])) {
-        // Normaliza la cabecera, ya que PHP puede cambiar el case
-        $authHeader = $headers['Authorization'] ?? $headers['authorization'];
+    // 1. Intentar con getallheaders() (método estándar)
+    if (function_exists('getallheaders')) {
+        $headers = getallheaders();
+    } else {
+        // Fallback si la función no existe (común en ciertos entornos)
+        $headers = $_SERVER;
+    }
+    
+    // 2. Revisar el encabezado Authorization estándar
+    $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+    
+    // 3. Revisar el encabezado forzado por Apache/SetEnvIf
+    if (!$authHeader) {
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+    }
+
+    // 4. Procesar el encabezado encontrado
+    if ($authHeader) {
+        // Debe coincidir con el formato: Bearer <token>
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            return $matches[1];
+            return $matches[1]; // Retorna solo el token
         }
     }
-    return null;
+    return null; // Token no encontrado o malformado
 }
 
 // Función interna para validar y decodificar el token
