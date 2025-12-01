@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login de Usuario</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/auth.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔐 Login de Acceso</h1>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <label for="username">Nombre de usuario:</label>
+            <input type="text" id="username" required>
+
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" required>
+
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+        <p id="message"></p>
+    </div>
+    <script>
+        if (getToken()) {
+            window.location.href = 'welcome.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+/* Paleta de colores:
+   Negro Mate: #1a1a1a
+   Mostaza: #ffcc66 (tono brillante) o #cc9933 (tono más apagado)
+*/
+
+:root {
+    --color-background: #1a1a1a; /* Negro Mate */
+    --color-text: #f0f0f0; /* Blanco suave para contraste */
+    --color-primary: #cc9933; /* Mostaza (principal) */
+    --color-secondary: #ffcc66; /* Mostaza (acento) */
+    --color-danger: #e74c3c;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    background-color: #2c2c2c; /* Negro ligeramente más claro */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+h1 {
+    color: var(--color-primary);
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    text-align: left;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #444;
+    background-color: #3a3a3a;
+    color: var(--color-text);
+    border-radius: 4px;
+}
+
+button, .logout-btn {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, .logout-btn:hover {
+    background-color: var(--color-secondary);
+}
+
+#message {
+    margin-top: 15px;
+    color: var(--color-danger);
+    font-weight: bold;
+}
+
+/* Estilos específicos de Welcome/Forbidden */
+.welcome-info p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.welcome-info strong {
+    color: var(--color-secondary);
+}
+
+.forbidden-message {
+    color: var(--color-danger);
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 20px;
+}

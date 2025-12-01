@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenido</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/auth.js" defer></script>
+</head>
+<body onload="initWelcomePage()">
+    <div class="container">
+        <h1 id="welcomeMessage">Cargando bienvenida...</h1> 
+        
+        <div class="welcome-info">
+            <p>Usuario autenticado: <strong id="usernameDisplay">...</strong></p> 
+            <p>Hora actual: <strong id="currentTime">...</strong></p> 
+            <p><em id="additionalMessage">...</em></p>
+        </div>
+
+        <button class="logout-btn" onclick="handleLogout()">Cerrar Sesión</button>
+    </div>
+</body>
+</html>
